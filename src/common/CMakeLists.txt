@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 #opencv
 # https://opencv.org/
 # https://github.com/opencv/opencv
-set(OPENCV_INSTALL_DIR "D:/develop/opencv/4.12.0/opencv/build/x64/vc16/lib")
+set(OPENCV_INSTALL_DIR "D:/develop/opencv/4.12.0/opencv/build/x64/vc16/lib" CACHE STRING "OPENCV_INSTALL_DIR")
 set(OpenCV_DIR ${OPENCV_INSTALL_DIR})
 find_package(OpenCV REQUIRED)
 message("OpenCV_FOUND:${OpenCV_FOUND}")

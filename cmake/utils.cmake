@@ -24,3 +24,23 @@ function(add_subdirectories root_dir pattern)
 
 endfunction()
 
+function(copyDirToTargetDir dirName)
+    message("copyDirToTargetDir: dirName:${dirName}")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${PROJECT_SOURCE_DIR}/${dirName}/"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}/"
+            COMMENT "Copying ${dirName} directory to target directory"
+    )
+endfunction()
+
+function(copyFileToTargetDir filePath)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${filePath}
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+            COMMENT "Copying file:[${filePath}] to target directory"
+    )
+endfunction()

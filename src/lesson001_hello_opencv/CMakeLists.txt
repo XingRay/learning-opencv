@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.31)
 project(lesson001_hello_opencv)
 message("lesson: ${PROJECT_NAME}")
 
+include("../../cmake/utils.cmake")
+
 set(CMAKE_CXX_STANDARD 23)
 
 file(GLOB_RECURSE SRC_LIST
@@ -20,18 +22,10 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # 复制 resource 目录
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${PROJECT_SOURCE_DIR}/resource/"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource/"
-        COMMENT "Copying resource directory to executable directory"
-)
-
+# 方法定义在 ../../cmake/utils.cmake 中
+copyDirToTargetDir("resource")
 
 # 自动复制 OpenCV DLL（Debug/Release 自动适配）
-set(OPENCV_INSTALL_DIR "D:/develop/opencv/4.12.0/opencv/build/x64/vc16/lib")
 message("OPENCV_INSTALL_DIR:${OPENCV_INSTALL_DIR}")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
