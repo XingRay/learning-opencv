@@ -1,29 +1,28 @@
 #include <iostream>
 
 #include <opencv2/opencv.hpp>
+#include "Log.h"
 
 // https://www.runoob.com/opencv/cpp-opencv-basic.html
 int main() {
     // 读取图像
-    cv::Mat image = cv::imread("resource/image/test.jpg");
+    cv::Mat image = cv::imread("resource/image/test.webp");
 
     // 检查图像是否成功加载
     if (image.empty()) {
-         << "错误：无法加载图像，请检查路径是否正确。" << endl;
+        LOG_D("错误：无法加载图像，请检查路径是否正确。");
         return -1;
     }
 
     // 显示图像
-    namedWindow("Display Image", WINDOW_AUTOSIZE);
+    cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
     imshow("Display Image", image);
 
     // 等待按键
-    waitKey(0);
+    cv::waitKey(0);
 
     // 关闭窗口
-    destroyAllWindows();
-
-    return 0;
+    cv::destroyAllWindows();
 
     return 0;
 }

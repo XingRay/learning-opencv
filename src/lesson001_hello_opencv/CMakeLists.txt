@@ -4,20 +4,6 @@ message("lesson: ${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 23)
 
-#opencv
-# https://opencv.org/
-# https://github.com/opencv/opencv
-set(OPENCV_INSTALL_DIR "D:/develop/opencv/4.12.0/opencv/build/x64/vc16/lib")
-set(OpenCV_DIR ${OPENCV_INSTALL_DIR})
-find_package(OpenCV REQUIRED)
-message("OpenCV_FOUND:${OpenCV_FOUND}")
-message("OpenCV_INCLUDE_DIRS:${OpenCV_INCLUDE_DIRS}")
-message("OpenCV_LIBS:${OpenCV_LIBS}")
-if (NOT ${OpenCV_FOUND})
-    message(FATAL_ERROR "OpenCV not found!")
-endif ()
-
-
 file(GLOB_RECURSE SRC_LIST
         *.cpp
         *.c++
@@ -33,10 +19,23 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE ${OpenCV_LIBS} common
 )
 
+# 复制 resource 目录
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        "${PROJECT_SOURCE_DIR}/resource"
-        "${CMAKE_CURRENT_BINARY_DIR}/resource"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/resource/"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/resource/"
+        COMMENT "Copying resource directory to executable directory"
 )
 
 
+# 自动复制 OpenCV DLL（Debug/Release 自动适配）
+set(OPENCV_INSTALL_DIR "D:/develop/opencv/4.12.0/opencv/build/x64/vc16/lib")
+message("OPENCV_INSTALL_DIR:${OPENCV_INSTALL_DIR}")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${OPENCV_INSTALL_DIR}/../bin/$<IF:$<CONFIG:Debug>,opencv_world4120d.dll,opencv_world4120.dll>"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+        COMMENT "Copying OpenCV DLL ($<CONFIG>) to executable directory"
+)
