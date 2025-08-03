@@ -6,7 +6,7 @@
 // https://www.runoob.com/opencv/cpp-opencv-basic.html
 int main() {
     // 读取图像
-    cv::Mat image = cv::imread("resource/image/test.webp");
+    cv::Mat image = cv::imread("resource/image/lena.png");
 
     // 检查图像是否成功加载
     if (image.empty()) {
