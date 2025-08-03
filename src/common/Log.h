@@ -4,7 +4,7 @@
 
 #pragma once
 
-static const char *TAG = "learn-opencv";
+static const char *TAG = "learning-opencv";
 
 #ifdef WIN32
 

@@ -14,6 +14,11 @@ int main() {
         return -1;
     }
 
+    int width = image.cols;
+    int height = image.rows;
+    int channels = image.channels();
+    LOG_D("width:%d, height:%d, channels:%d", width, height, channels);
+
     // 显示图像
     cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
     imshow("Display Image", image);
