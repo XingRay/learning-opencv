@@ -24,17 +24,15 @@ file(GLOB_RECURSE SRC_LIST
         *.c
 )
 
-# 暂时没有源文件
-#add_library(${PROJECT_NAME} ${SRC_LIST} INTERFACE
-#)
-
-add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME} STATIC
+        ${SRC_LIST}
+)
 
 # 链接OpenCV库
 target_link_libraries(${PROJECT_NAME}
-        INTERFACE ${OpenCV_LIBS}
+        PUBLIC ${OpenCV_LIBS}
 )
 
 target_include_directories(${PROJECT_NAME}
-        INTERFACE ${PROJECT_SOURCE_DIR}
+        PUBLIC ${PROJECT_SOURCE_DIR}
 )
