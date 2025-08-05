@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(lesson001_hello_opencv)
+project(${CURRENT_DIR_NAME})
 message("lesson: ${PROJECT_NAME}")
 
 include("../../cmake/utils.cmake")

@@ -16,8 +16,8 @@ function(add_subdirectories root_dir pattern)
         get_filename_component(dir_NAME ${dir_PATH} NAME)
         message("dir_NAME:${dir_NAME}")
         if (IS_DIRECTORY ${dir_PATH} AND (${dir_NAME} MATCHES ${pattern}))
-            message("lesson dir_NAME:${dir_NAME}")
-            set(CURRENT_TEST_NAME ${dir_NAME})
+            set(CURRENT_DIR_NAME ${dir_NAME})
+            message("CURRENT_DIR_NAME: ${CURRENT_DIR_NAME}")
             add_subdirectory(${dir_PATH})
         endif ()
     endforeach ()
@@ -26,14 +26,19 @@ endfunction()
 
 function(copyDirToTargetDir dirName)
     message("copyDirToTargetDir: dirName:${dirName}")
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
-            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${PROJECT_SOURCE_DIR}/${dirName}/"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}/"
-            COMMENT "Copying ${dirName} directory to target directory"
-    )
+    if (EXISTS ${PROJECT_SOURCE_DIR}/${dirName} AND IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${dirName})
+
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
+                COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}"
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${PROJECT_SOURCE_DIR}/${dirName}/"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${dirName}/"
+                COMMENT "Copying ${dirName} directory to target directory"
+        )
+
+    endif ()
+
 endfunction()
 
 function(copyFileToTargetDir filePath)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(lesson002_basic)
+project(${CURRENT_DIR_NAME})
 message("lesson: ${PROJECT_NAME}")
 
 include("../../cmake/utils.cmake")
@@ -21,9 +21,6 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE ${OpenCV_LIBS} common
 )
 
-# 复制 resource 目录
-# 方法定义在 ../../cmake/utils.cmake 中
-copyDirToTargetDir("resource")
 
 # 自动复制 OpenCV DLL（Debug/Release 自动适配）
 message("OPENCV_INSTALL_DIR:${OPENCV_INSTALL_DIR}")
