@@ -41,5 +41,72 @@ int main() {
     cvlite::Window rotatedImageWindow("rotatedImage");
     rotatedImageWindow.showWaitAnyKey(rotatedImage);
 
+    // 平移测试
+    double tx = 100.0;
+    double ty = 200.0;
+    cv::Mat translationMatrix = (cv::Mat_<double>(2, 3) << 1, 0, tx, 0, 1, ty);
+    cv::Mat translatedImage;
+    cv::warpAffine(image, translatedImage, translationMatrix, image.size());
+    cvlite::Window translatedImageWindow("translatedImage");
+    translatedImageWindow.showWaitAnyKey(translatedImage);
+
+
+    // 翻转测试
+    cv::Mat flippedImage;
+    // 1表示水平翻转，0表示垂直翻转
+    cv::flip(image, flippedImage, 1);
+    cvlite::Window flippedImageWindow("flippedImage");
+    flippedImageWindow.showWaitAnyKey(flippedImage);
+
+
+    // 仿射变换测试
+    // 定义仿射变换的源点和目标点（3个点）
+    cv::Point2f affineSrcPoints[3], affineDstPoints[3];
+
+    // 源点（原始图像的三个点）
+    affineSrcPoints[0] = cv::Point2f(0, 0); // 左上角
+    affineSrcPoints[1] = cv::Point2f(width - 1, 0); // 右上角
+    affineSrcPoints[2] = cv::Point2f(0, height - 1); // 左下角
+
+    // 目标点（变换后的三个点）
+    affineDstPoints[0] = cv::Point2f(50, 50); // 左上角平移 (50,50)
+    affineDstPoints[1] = cv::Point2f(width - 50, 0); // 右上角向左移动50像素
+    affineDstPoints[2] = cv::Point2f(0, height - 50); // 左下角向上移动50像素
+
+    cv::Mat affineMatrix = cv::getAffineTransform(affineSrcPoints, affineDstPoints);
+    cv::Mat affineImage;
+    cv::warpAffine(image, affineImage, affineMatrix, image.size());
+
+    cvlite::Window affineImageWindow("affineImage");
+    affineImageWindow.showWaitAnyKey(affineImage);
+
+
+    // 透视变换测试
+    // 定义透视变换的源点和目标点（4个点）
+    cv::Point2f perspectSrcPoints[4], perspectDstPoints[4];
+
+    // 源点（原始图像的四个角点）
+    perspectSrcPoints[0] = cv::Point2f(0, 0); // 左上角
+    perspectSrcPoints[1] = cv::Point2f(width - 1, 0); // 右上角
+    perspectSrcPoints[2] = cv::Point2f(width - 1, height - 1); // 右下角
+    perspectSrcPoints[3] = cv::Point2f(0, height - 1); // 左下角
+
+    // 目标点（变换后的四个点，模拟透视效果）
+    perspectDstPoints[0] = cv::Point2f(150, 50); // 左上角向右下方移动
+    perspectDstPoints[1] = cv::Point2f(width - 150, 50); // 右上角向左下方移动
+    perspectDstPoints[2] = cv::Point2f(width - 1 - 50, height - 1 - 10); // 右下角向左上方移动
+    perspectDstPoints[3] = cv::Point2f(50, height - 1 - 10); //左下角向右上方移动
+
+    // 计算透视变换矩阵
+    cv::Mat perspectiveMatrix = cv::getPerspectiveTransform(perspectSrcPoints, perspectDstPoints);
+
+    // 应用透视变换
+    cv::Mat perspectiveImage;
+    cv::warpPerspective(image, perspectiveImage, perspectiveMatrix, image.size());
+
+    // 显示结果
+    cvlite::Window perspectiveImageWindow("perspectiveImage");
+    perspectiveImageWindow.showWaitAnyKey(perspectiveImage);
+
     return 0;
 }

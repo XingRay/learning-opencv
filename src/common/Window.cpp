@@ -7,26 +7,27 @@
 
 namespace cvlite {
     Window::Window(const char* name, cv::WindowFlags flags)
-        : mName(name), mIsOwner(true) {
+        : mName(name), mIsOwner(true), mMouseEventCallback{} {
         cv::namedWindow(mName, flags);
     }
 
     Window::~Window() {
         if (mIsOwner) {
             destroy();
-            mIsOwner = false;
         }
     }
 
     Window::Window(Window&& other) noexcept
         : mName(other.mName),
-          mIsOwner(std::exchange(other.mIsOwner, false)) {
+          mIsOwner(std::exchange(other.mIsOwner, false)),
+          mMouseEventCallback(std::exchange(other.mMouseEventCallback, nullptr)) {
     }
 
     Window& Window::operator=(Window&& other) noexcept {
         if (this != &other) {
             mName = other.mName;
             mIsOwner = std::exchange(other.mIsOwner, false);
+            mMouseEventCallback = std::exchange(other.mMouseEventCallback, nullptr);
         }
         return *this;
     }
@@ -51,5 +52,21 @@ namespace cvlite {
         if (mIsOwner && cv::getWindowProperty(mName, cv::WND_PROP_VISIBLE) >= 1) {
             cv::destroyWindow(mName);
         }
+    }
+
+    void Window::onMouse(int event, int x, int y, int flags, void* userdata) {
+        Window* window = static_cast<Window*>(userdata);
+        (*window).onMouseEvent(event, x, y, flags);
+    }
+
+    void Window::onMouseEvent(int event, int x, int y, int flags) {
+        if (mMouseEventCallback != nullptr) {
+            mMouseEventCallback(event, x, y, flags);
+        }
+    }
+
+    void Window::setMouseCallback(std::function<void(int event, int x, int y, int flags)>&& callback) {
+        cv::setMouseCallback(mName, onMouse, this);
+        mMouseEventCallback = std::move(callback);
     }
 } // cvlite
