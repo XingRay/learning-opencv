@@ -6,8 +6,8 @@
 
 
 namespace cvlite {
-    Window::Window(const char* name, cv::WindowFlags flags)
-        : mName(name), mIsOwner(true), mMouseEventCallback{} {
+    Window::Window(std::string&& name, cv::WindowFlags flags)
+        : mName(std::move(name)), mIsOwner(true), mMouseEventCallback{} {
         cv::namedWindow(mName, flags);
     }
 
@@ -18,14 +18,14 @@ namespace cvlite {
     }
 
     Window::Window(Window&& other) noexcept
-        : mName(other.mName),
+        : mName(std::move(other.mName)),
           mIsOwner(std::exchange(other.mIsOwner, false)),
           mMouseEventCallback(std::exchange(other.mMouseEventCallback, nullptr)) {
     }
 
     Window& Window::operator=(Window&& other) noexcept {
         if (this != &other) {
-            mName = other.mName;
+            mName = std::move(other.mName);
             mIsOwner = std::exchange(other.mIsOwner, false);
             mMouseEventCallback = std::exchange(other.mMouseEventCallback, nullptr);
         }
